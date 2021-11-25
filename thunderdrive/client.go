@@ -23,7 +23,7 @@ type Client struct {
 func New() *Client {
 	client := resty.New()
 	client.SetHostURL(BaseUrl)
-	// client.SetDebug(true)
+	client.SetDebug(true)
 	client.SetHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36")
 
 	return &Client{httpClient: client}
@@ -288,7 +288,7 @@ func (c Client) Upload(parentId string, path string) {
 		SetHeader("X-XSRF-TOKEN", c.getXsrfToken()).
 		SetFile("file", path).
 		SetFormData(map[string]string{
-			"parent_id": parentId,
+			"parentId": parentId,
 		}).
 		Post("/secure/uploads")
 
@@ -304,7 +304,7 @@ func (c Client) UploadWithReader(parentId string, fileName string, reader io.Rea
 		SetHeader("X-XSRF-TOKEN", c.getXsrfToken()).
 		SetFileReader("file", fileName, reader).
 		SetFormData(map[string]string{
-			"parent_id": parentId,
+			"parentId": parentId,
 		}).
 		Post("/secure/uploads")
 
