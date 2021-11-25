@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -256,11 +257,12 @@ func (c Client) Remove(entryIds []string) {
 
 // TODO: Add the move function
 
-func (c Client) Mkdir(parentId *string, name string) {
+func (c Client) Mkdir(parentId *string, name string) EntryDetails {
 	log.Println("Creating directory", parentId, name)
 
-	_, err := c.httpClient.R().
+	resp, err := c.httpClient.R().
 		SetHeader("X-XSRF-TOKEN", c.getXsrfToken()).
+		SetResult(EntryDetails{}).
 		SetBody(map[string]interface{}{
 			"name":      name,
 			"parent_id": parentId,
@@ -270,6 +272,8 @@ func (c Client) Mkdir(parentId *string, name string) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	return *resp.Result().(*EntryDetails)
 }
 
 func (c Client) Upload(parentId string, path string) {
@@ -278,6 +282,22 @@ func (c Client) Upload(parentId string, path string) {
 	_, err := c.httpClient.R().
 		SetHeader("X-XSRF-TOKEN", c.getXsrfToken()).
 		SetFile("file", path).
+		SetFormData(map[string]string{
+			"parent_id": parentId,
+		}).
+		Post("/secure/uploads")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (c Client) UploadWithReader(parentId string, fileName string, reader io.Reader) {
+	log.Println("Uploading file with reader", parentId, fileName)
+
+	_, err := c.httpClient.R().
+		SetHeader("X-XSRF-TOKEN", c.getXsrfToken()).
+		SetFileReader("file", fileName, reader).
 		SetFormData(map[string]string{
 			"parent_id": parentId,
 		}).
