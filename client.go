@@ -23,7 +23,7 @@ type Client struct {
 func New() *Client {
 	client := resty.New()
 	client.SetHostURL(BaseUrl)
-	client.SetDebug(true)
+	// client.SetDebug(true)
 	client.SetHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36")
 
 	return &Client{httpClient: client}
@@ -311,4 +311,16 @@ func (c Client) UploadWithReader(parentId string, fileName string, reader io.Rea
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func (c Client) DownloadWithReader(fileId string) io.ReadCloser {
+	resp, err := c.httpClient.R().
+		SetDoNotParseResponse(true).
+		Get("/secure/uploads/" + fileId)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return resp.RawBody()
 }
