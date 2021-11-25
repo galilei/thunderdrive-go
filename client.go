@@ -224,14 +224,14 @@ func (c Client) GetEntriesPage(folderId string, page int, orderBy *string, order
 	return *resp.Result().(*GetEntriesResponsePayload)
 }
 
-func (c Client) GetEntries(path string) []EntryDetails {
-	log.Println("Getting entries", path)
+func (c Client) GetEntries(hash string) []EntryDetails {
+	log.Println("Getting entries", hash)
 
 	result := []EntryDetails{}
 	var response GetEntriesResponsePayload
 	page := 1
 	for ok := true; ok; ok = bool(response.NextPageURL != nil) && bool(response.To != response.Total) {
-		response = c.GetEntriesPage("root", page, nil, nil)
+		response = c.GetEntriesPage(hash, page, nil, nil)
 		result = append(result, response.Data...)
 		page++
 	}
