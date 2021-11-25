@@ -257,12 +257,17 @@ func (c Client) Remove(entryIds []string) {
 
 // TODO: Add the move function
 
+type MkdirResponsePayload struct {
+	Folder EntryDetails `json:"folder"`
+	Status string       `json:"status"`
+}
+
 func (c Client) Mkdir(parentId *string, name string) EntryDetails {
 	log.Println("Creating directory", parentId, name)
 
 	resp, err := c.httpClient.R().
 		SetHeader("X-XSRF-TOKEN", c.getXsrfToken()).
-		SetResult(EntryDetails{}).
+		SetResult(MkdirResponsePayload{}).
 		SetBody(map[string]interface{}{
 			"name":      name,
 			"parent_id": parentId,
@@ -273,7 +278,7 @@ func (c Client) Mkdir(parentId *string, name string) EntryDetails {
 		log.Fatal(err)
 	}
 
-	return *resp.Result().(*EntryDetails)
+	return resp.Result().(*MkdirResponsePayload).Folder
 }
 
 func (c Client) Upload(parentId string, path string) {
