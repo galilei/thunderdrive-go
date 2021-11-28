@@ -20,9 +20,12 @@ type Client struct {
 	userDetails UserDetails
 }
 
-func New() *Client {
+func New(transport *http.Transport) *Client {
 	client := resty.New()
 	client.SetHostURL(BaseUrl)
+	if transport != nil {
+		client.SetTransport(transport)
+	}
 	// client.SetDebug(true)
 	client.SetHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36")
 
