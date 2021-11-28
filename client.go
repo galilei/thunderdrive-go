@@ -293,6 +293,7 @@ func (c Client) Upload(parentId string, path string) {
 		Post("/secure/uploads")
 
 	if err != nil {
+		log.Println("Error during upload", parentId)
 		log.Fatal(err)
 	}
 }
@@ -309,6 +310,7 @@ func (c Client) UploadWithReader(parentId string, fileName string, reader io.Rea
 		Post("/secure/uploads")
 
 	if err != nil {
+		log.Println("Error during upload", parentId, fileName)
 		log.Fatal(err)
 	}
 }
